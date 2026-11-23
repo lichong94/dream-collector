@@ -1,0 +1,62 @@
+name: PHP 语法检查与仓库健康校验
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: [ '7.4', '8.2' ]
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装 PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: pdo, pdo_mysql, mbstring, json
+          coverage: none
+
+      - name: 逐个文件语法检查
+        run: |
+          fail=0
+          while IFS= read -r f; do
+            out=$(php -l "$f" 2>&1) || { echo "$out"; fail=1; }
+          done < <(find . -name '*.php' -not -path './.git/*')
+          if [ "$fail" -ne 0 ]; then
+            echo "存在语法错误的 PHP 文件"; exit 1
+          fi
+          echo "全部 PHP 文件语法通过"
+
+      - name: 校验未提交生产配置
+        run: |
+          if [ -f config.php ]; then
+            echo "错误：仓库根目录不应存在 config.php（生产配置不入库）"; exit 1
+          fi
+          if [ ! -f config.example.php ]; then
+            echo "错误：缺少配置模板 config.example.php"; exit 1
+          fi
+          echo "配置文件状态正常"
+
+      - name: 校验安装脚本保留口令占位
+        run: |
+          if ! grep -q 'CHANGE_ME_STRONG_PASSWORD' sql/install.sql; then
+            echo "错误：sql/install.sql 中未保留口令占位，可能写入了真实口令"; exit 1
+          fi
+          echo "install.sql 口令占位完整"
+
+      - name: 关键文件完整性检查
+        run: |
+          for f in LICENSE README.md CHANGELOG.md CONTRIBUTING.md SECURITY.md \
+                   init.php header.php footer.php sql/install.sql deploy/apache-vhost.conf; do
+            if [ ! -f "$f" ]; then
+              echo "错误：缺少关键文件 $f"; exit 1
+            fi
+          done
+          echo "关键文件齐全"
