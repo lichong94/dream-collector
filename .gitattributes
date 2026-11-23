@@ -1,0 +1,20 @@
+# 统一换行符为 LF，避免跨平台提交造成整文件 diff
+* text=auto eol=lf
+
+*.php   text eol=lf
+*.css   text eol=lf
+*.js    text eol=lf
+*.sql   text eol=lf
+*.md    text eol=lf
+*.txt   text eol=lf
+*.conf  text eol=lf
+*.cron  text eol=lf
+*.py    text eol=lf
+.htaccess text eol=lf
+
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+*.zip   binary
