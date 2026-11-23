@@ -1,0 +1,6 @@
+# 管理后台目录：禁止列目录，禁止直接访问敏感后缀
+Options -Indexes
+
+<FilesMatch "\.(sql|md|log|json)$">
+    Require all denied
+</FilesMatch>

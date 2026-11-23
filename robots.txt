@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+Disallow: /edit.php
+Disallow: /save.php
+Disallow: /delete.php
+Disallow: /config.php
+Disallow: /init.php
+Disallow: /sitemap.xml.php
+Disallow: /login.php
+Disallow: /register.php
+Disallow: /profile.php
+Disallow: /logout.php
+Disallow: /toggle_visibility.php
+Disallow: /admin/
+
+Sitemap: https://dream.ddisk.cn/sitemap.xml

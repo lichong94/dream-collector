@@ -1,0 +1,16 @@
+# 梦境收集器 Apache 配置
+DirectoryIndex index.php
+Options -Indexes
+
+RewriteEngine On
+
+# 伪静态：/dream/123.html -> /detail.php?id=123
+RewriteRule ^dream/([0-9]+)\.html$ detail.php?id=$1 [QSA,L]
+
+# 站点地图伪静态：/sitemap.xml -> /sitemap.xml.php
+RewriteRule ^sitemap\.xml$ sitemap.xml.php [L]
+
+# 禁止访问敏感后缀文件
+<FilesMatch "\.(sql|md|log|json)$">
+    Require all denied
+</FilesMatch>
