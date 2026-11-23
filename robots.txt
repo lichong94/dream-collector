@@ -13,4 +13,4 @@ Disallow: /logout.php
 Disallow: /toggle_visibility.php
 Disallow: /admin/
 
-Sitemap: https://dream.ddisk.cn/sitemap.xml
+Sitemap: https://dream.example.com/sitemap.xml
