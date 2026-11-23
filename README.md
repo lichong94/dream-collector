@@ -29,7 +29,7 @@
 
 ### 互动评论
 - 评论范围：仅公开梦境开放评论；隐私梦境详情不显示评论区，提交接口同样拒绝
-- 两级楼中楼：登录用户可发表顶级评论，可回复顶级评论；回复展示被回复者昵称，不允许回复回复
+- 两级楼中楼：登录用户可发表顶级评论，可回复顶级评论；回复展示被回复氃称，不允许回复回复
 - 内容校验：1–500 字，输出经 `e()` 转义防 XSS，CSRF 校验
 - 删除权限：评论本人、梦境作者、管理员可删除；删除顶级评论时级联删除其下全部回复，删除单条回复仅删自身
 - 后台管理：管理员可查看全站评论与回复，按关键词/状态筛选，可隐藏、恢复或删除
@@ -88,7 +88,19 @@ dream-collector/
 ├── deploy/
 │   ├── apache-vhost.conf     # Apache 站点配置模板（80 跳转 443 + SSL）
 │   └── certbot-renew.cron    # 证书自动续期定时任务
-└── tools/aliyun_dns.py   # 阿里云云解析 API 脚本（增删查解析记录）
+├── tools/aliyun_dns.py   # 阿里云云解析 API 脚本（增删查解析记录）
+├── CONTRIBUTING.md       # 贡献指南：环境、本地运行、代码约定、PR 流程
+├── SECURITY.md           # 安全策略：漏洞报告渠道、已有防护、部署建议
+├── CHANGELOG.md          # 变更记录（按版本）
+├── LICENSE               # MIT
+├── .editorconfig         # 编辑器统一：UTF-8 / LF / 4 空格
+├── .gitattributes        # 换行符归一，二进制文件标记
+├── .gitignore            # 忽略 config.php、日志、IDE、备份
+└── .github/
+    ├── workflows/php-lint.yml                # 推送/PR 时 PHP 语法检查 + 仓库健康校验
+    ├── ISSUE_TEMPLATE/bug_report.md          # 缺陷报告模板
+    ├── ISSUE_TEMPLATE/feature_request.md     # 功能建议模板
+    └── PULL_REQUEST_TEMPLATE.md              # PR 自查清单
 ```
 
 ## 四、SEO / GEO 优化清单
@@ -102,7 +114,7 @@ dream-collector/
 - 伪静态详情地址：`/dream/编号.html`
 - 站点语言标记 `zh-CN`，移动端视口适配
 
-### 生成式引擎优化（GEO）
+### 生成式引擎优化（GEO，面向豆包/文心/DeepSeek/千问/元宝）
 - FAQ 页提供事实型问答：工具定义、记梦原因、忘记梦境处理、保存字段、清醒梦概念、回顾方式
 - 问答采用明确陈述句与清单结构，便于大模型抽取引用
 - About 页提供工具定位、使用步骤、字段定义等稳定可引用内容
@@ -134,3 +146,22 @@ dream-collector/
 - 部署前请复制 `config.example.php` 为 `config.php` 并填写自己的数据库信息；`config.php` 已被 `.gitignore` 排除。
 - 首次部署建议修改 `sql/install.sql` 中的数据库账号口令占位 `CHANGE_ME_STRONG_PASSWORD`。
 - 欢迎提交 Issue 与 Pull Request。
+
+## 八、开发与贡献
+
+- 环境要求、本地运行步骤、代码约定（PDO 预处理、`e()` 转义、CSRF、后台 `active_admin` 高亮等）见 [CONTRIBUTING.md](CONTRIBUTING.md)。
+- 缺陷与需求请使用 `.github/ISSUE_TEMPLATE/` 下的模板提交，模板会引导你补齐复现环境与日志。
+- 提交 PR 前请对照 `.github/PULL_REQUEST_TEMPLATE.md` 的自查清单，重点确认未误提交 `config.php` 与真实口令、域名、IP。
+- 安全问题请勿公开提交 Issue，按 [SECURITY.md](SECURITY.md) 通过邮件报告。
+- 版本变更记录见 [CHANGELOG.md](CHANGELOG.md)。
+
+## 九、质量保障
+
+仓库内置 GitHub Actions 工作流 `.github/workflows/php-lint.yml`，在推送到 `main` 或提交 PR 时自动执行：
+
+1. 使用 PHP 7.4 与 8.2 两个版本逐个文件执行 `php -l`，任一文件语法错误即失败；
+2. 检查仓库根目录不存在 `config.php` 且存在 `config.example.php`，防止生产配置被误提交；
+3. 检查 `sql/install.sql` 仍保留口令占位 `CHANGE_ME_STRONG_PASSWORD`，被改为具体口令即失败；
+4. 关键文件完整性检查（LICENSE、README、CHANGELOG、CONTRIBUTING、SECURITY、init.php、sql/install.sql、部署模板等）。
+
+全部步骤通过才算检查成功。若仓库启用了 Actions，首次运行结果会出现在仓库的 Actions 标签页。
